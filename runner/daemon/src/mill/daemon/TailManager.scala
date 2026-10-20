@@ -37,6 +37,10 @@ class TailManager(daemonDir: os.Path) extends AutoCloseable {
     tailerErr = newErr
     try t
     finally {
+      // Relay whatever the subprocess wrote up to now while the streams still
+      // point at the client, before handing them back to the daemon's own streams
+      stdoutTailer.flushNow()
+      stderrTailer.flushNow()
       tailerOut = System.out
       tailerErr = System.err
     }
